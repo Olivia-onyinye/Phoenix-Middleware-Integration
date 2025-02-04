@@ -1,10 +1,5 @@
 package com.uganda.phoenix.api.middleware.services;
 
-import com.interswitchug.phoenix.api.middleware.dto.*;
-import com.interswitchug.phoenix.api.middleware.utils.AuthUtils;
-import com.interswitchug.phoenix.api.middleware.utils.Constants;
-import com.interswitchug.phoenix.api.middleware.utils.CryptoUtils;
-import com.interswitchug.phoenix.api.middleware.utils.HttpUtil;
 import com.uganda.phoenix.api.middleware.api.request.PaymentRequest;
 import com.uganda.phoenix.api.middleware.model.BaseResponse;
 import com.uganda.phoenix.api.middleware.model.JSONDataTransform;
