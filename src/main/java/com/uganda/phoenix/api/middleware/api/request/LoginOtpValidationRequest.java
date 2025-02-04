@@ -1,6 +1,8 @@
 package com.uganda.phoenix.api.middleware.api.request;
 
-public class LoginOtpValidationRequest extends ClientTerminalRequest{
+import com.uganda.phoenix.api.middleware.model.ClientTerminalRequest;
+
+public class LoginOtpValidationRequest extends ClientTerminalRequest {
 
 	private String otp;
 	public String getOtp() {

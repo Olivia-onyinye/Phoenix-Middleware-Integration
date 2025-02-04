@@ -5,6 +5,15 @@ import com.interswitchug.phoenix.api.middleware.utils.AuthUtils;
 import com.interswitchug.phoenix.api.middleware.utils.Constants;
 import com.interswitchug.phoenix.api.middleware.utils.CryptoUtils;
 import com.interswitchug.phoenix.api.middleware.utils.HttpUtil;
+import com.uganda.phoenix.api.middleware.api.request.PaymentRequest;
+import com.uganda.phoenix.api.middleware.model.BaseResponse;
+import com.uganda.phoenix.api.middleware.model.JSONDataTransform;
+import com.uganda.phoenix.api.middleware.model.KeyExchangeResponse;
+import com.uganda.phoenix.api.middleware.model.PhoenixResponseCodes;
+import com.uganda.phoenix.api.middleware.utils.AuthUtils;
+import com.uganda.phoenix.api.middleware.utils.Constants;
+import com.uganda.phoenix.api.middleware.utils.CryptoUtils;
+import com.uganda.phoenix.api.middleware.utils.HttpUtil;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -24,7 +33,7 @@ public class PaymentsService {
 		String endpointUrl =  Constants.ROOT_LINK + "sente/customerValidation";
 		request.setTerminalId(Constants.TERMINAL_ID);
 
-		SystemResponse<KeyExchangeResponse> exchangeKeys = keyExchangeService.doKeyExchange();
+		BaseResponse<KeyExchangeResponse> exchangeKeys = keyExchangeService.doKeyExchange();
 
 		if(exchangeKeys.getResponseCode().equals(PhoenixResponseCodes.APPROVED.CODE)) {
 			Map<String,String> headers = AuthUtils.generateInterswitchAuth(Constants.POST_REQUEST, endpointUrl, "",
@@ -49,7 +58,7 @@ public class PaymentsService {
 				+request.getRequestReference()+"&"
 		+ request.getCustomerId()+"&" +request.getPaymentCode();
 
-		SystemResponse<KeyExchangeResponse> exchangeKeys = keyExchangeService.doKeyExchange();
+		BaseResponse<KeyExchangeResponse> exchangeKeys = keyExchangeService.doKeyExchange();
 
 		if(exchangeKeys.getResponseCode().equals(PhoenixResponseCodes.APPROVED.CODE)) {
 
@@ -76,7 +85,7 @@ public class PaymentsService {
 		    String endpointUrl =  Constants.ROOT_LINK +  "sente/accountBalance";
 			String request = endpointUrl +"?terminalId="+ Constants.TERMINAL_ID + "&requestReference="+java.util.UUID.randomUUID();
 
-			SystemResponse<KeyExchangeResponse> exchangeKeys = keyExchangeService.doKeyExchange();
+			BaseResponse<KeyExchangeResponse> exchangeKeys = keyExchangeService.doKeyExchange();
 
 			if(exchangeKeys.getResponseCode().equals(PhoenixResponseCodes.APPROVED.CODE)) {
 				Map<String,String> headers = AuthUtils.generateInterswitchAuth(Constants.GET_REQUEST, request, "",exchangeKeys.getResponse().getAuthToken(),exchangeKeys.getResponse().getTerminalKey());
@@ -92,7 +101,7 @@ public class PaymentsService {
 		String endpointUrl =  Constants.ROOT_LINK +  "sente/status";
 		String request = endpointUrl +"?terminalId="+ Constants.TERMINAL_ID + "&requestReference="+requestReference;
 
-		SystemResponse<KeyExchangeResponse> exchangeKeys = keyExchangeService.doKeyExchange();
+		BaseResponse<KeyExchangeResponse> exchangeKeys = keyExchangeService.doKeyExchange();
 
 		if(exchangeKeys.getResponseCode().equals(PhoenixResponseCodes.APPROVED.CODE)) {
 			Map<String,String> headers = AuthUtils.generateInterswitchAuth(Constants.GET_REQUEST, request, "",exchangeKeys.getResponse().getAuthToken(),exchangeKeys.getResponse().getTerminalKey());
@@ -107,7 +116,7 @@ public class PaymentsService {
 
 		String endpointUrl =  Constants.BILLERS_ROOT +  "categories-by-client/"+Constants.TERMINAL_ID+"/"+ Constants.TERMINAL_ID;
 
-		SystemResponse<KeyExchangeResponse> exchangeKeys = keyExchangeService.doKeyExchange();
+		BaseResponse<KeyExchangeResponse> exchangeKeys = keyExchangeService.doKeyExchange();
 
 		if(exchangeKeys.getResponseCode().equals(PhoenixResponseCodes.APPROVED.CODE)) {
 			Map<String,String> headers = AuthUtils.generateInterswitchAuth(Constants.GET_REQUEST, endpointUrl, "",exchangeKeys.getResponse().getAuthToken(),exchangeKeys.getResponse().getTerminalKey());
@@ -122,7 +131,7 @@ public class PaymentsService {
 
 		String endpointUrl =  Constants.BILLERS_ROOT +  "biller-by-category/"+categoryId;
 
-		SystemResponse<KeyExchangeResponse> exchangeKeys = keyExchangeService.doKeyExchange();
+		BaseResponse<KeyExchangeResponse> exchangeKeys = keyExchangeService.doKeyExchange();
 
 		if(exchangeKeys.getResponseCode().equals(PhoenixResponseCodes.APPROVED.CODE)) {
 			Map<String,String> headers = AuthUtils.generateInterswitchAuth(Constants.GET_REQUEST, endpointUrl, "",exchangeKeys.getResponse().getAuthToken(),exchangeKeys.getResponse().getTerminalKey());
@@ -137,7 +146,7 @@ public class PaymentsService {
 
 		String endpointUrl =  Constants.BILLERS_ROOT +  "items/biller-id/"+billerId;
 
-		SystemResponse<KeyExchangeResponse> exchangeKeys = keyExchangeService.doKeyExchange();
+		BaseResponse<KeyExchangeResponse> exchangeKeys = keyExchangeService.doKeyExchange();
 
 		if(exchangeKeys.getResponseCode().equals(PhoenixResponseCodes.APPROVED.CODE)) {
 			Map<String,String> headers = AuthUtils.generateInterswitchAuth(Constants.GET_REQUEST, endpointUrl, "",exchangeKeys.getResponse().getAuthToken(),exchangeKeys.getResponse().getTerminalKey());

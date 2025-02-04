@@ -1,5 +1,7 @@
 package com.uganda.phoenix.api.middleware.api.request;
 
+import com.uganda.phoenix.api.middleware.model.ClientTerminalRequest;
+
 import java.io.Serializable;
 
 

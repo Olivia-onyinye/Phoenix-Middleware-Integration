@@ -1,8 +1,8 @@
 package com.uganda.phoenix.api.middleware.api;
 
 
-import com.interswitchug.phoenix.api.middleware.dto.PaymentRequest;
-import com.interswitchug.phoenix.api.middleware.services.PaymentsService;
+import com.uganda.phoenix.api.middleware.api.request.PaymentRequest;
+import com.uganda.phoenix.api.middleware.services.PaymentsService;
 import jakarta.websocket.server.PathParam;
 import org.springframework.web.bind.annotation.*;
 
