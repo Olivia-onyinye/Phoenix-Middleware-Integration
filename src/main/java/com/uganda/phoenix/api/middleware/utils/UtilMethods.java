@@ -3,7 +3,7 @@ package com.uganda.phoenix.api.middleware.utils;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.uganda.phoenix.api.middleware.model.PhoenixResponseCodes;
-import com.uganda.phoenix.api.middleware.model.SystemResponse;
+import com.uganda.phoenix.api.middleware.model.BaseResponse;
 import org.bouncycastle.util.encoders.Hex;
 
 import java.nio.charset.StandardCharsets;
@@ -25,11 +25,11 @@ public class UtilMethods {
 		}
     }
     
-    public static <T> SystemResponse<T> unMarshallSystemResponseObject(String response,Class<T> theClass) throws SystemApiException{
+    public static <T> BaseResponse<T> unMarshallSystemResponseObject(String response, Class<T> theClass) throws SystemApiException{
 		 try
 			{
 				ObjectMapper mapper = new ObjectMapper();
-				JavaType type = mapper.getTypeFactory().constructParametricType(SystemResponse.class, theClass);
+				JavaType type = mapper.getTypeFactory().constructParametricType(BaseResponse.class, theClass);
 				return  mapper.readValue(response, type);
 			}catch(Exception e) {
 				e.printStackTrace();

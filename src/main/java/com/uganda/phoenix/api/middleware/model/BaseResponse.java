@@ -3,7 +3,7 @@ package com.uganda.phoenix.api.middleware.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown=true)
-public class SystemResponse<T> {
+public class BaseResponse<T> {
 	protected String responseCode;
 	protected String responseMessage;
 	protected T response;
