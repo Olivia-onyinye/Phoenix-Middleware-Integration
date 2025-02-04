@@ -2,8 +2,8 @@ package com.uganda.phoenix.api.middleware.utils;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.interswitchug.phoenix.api.middleware.dto.PhoenixResponseCodes;
-import com.interswitchug.phoenix.api.middleware.dto.SystemResponse;
+import com.uganda.phoenix.api.middleware.model.PhoenixResponseCodes;
+import com.uganda.phoenix.api.middleware.model.SystemResponse;
 import org.bouncycastle.util.encoders.Hex;
 
 import java.nio.charset.StandardCharsets;

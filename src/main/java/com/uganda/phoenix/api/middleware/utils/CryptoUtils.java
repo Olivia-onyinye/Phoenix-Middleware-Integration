@@ -1,6 +1,6 @@
 package com.uganda.phoenix.api.middleware.utils;
 
-import com.interswitchug.phoenix.api.middleware.dto.PhoenixResponseCodes;
+import com.uganda.phoenix.api.middleware.model.PhoenixResponseCodes;
 import org.apache.commons.codec.binary.Base64;
 import org.bouncycastle.util.encoders.Hex;
 

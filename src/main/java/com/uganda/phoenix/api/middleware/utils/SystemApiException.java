@@ -1,7 +1,7 @@
 package com.uganda.phoenix.api.middleware.utils;
 
-import com.interswitchug.phoenix.api.middleware.dto.PhoenixResponseCodes;
 
+import com.uganda.phoenix.api.middleware.model.PhoenixResponseCodes;
 
 public class SystemApiException extends Exception {
 	private static final long serialVersionUID = -1988373452396426046L;
