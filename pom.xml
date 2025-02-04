@@ -8,7 +8,7 @@
 		<version>3.1.5</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.interswitchug</groupId>
+	<groupId>com.uganda</groupId>
 	<artifactId>phoenix-api-middleware</artifactId>
 	<version>1.0.0</version>
 	<name>phoenix-api-middleware</name>
@@ -21,7 +21,7 @@
 		<commons.logging.version>1.2</commons.logging.version>
 		<jackson.version>2.13.0</jackson.version>
 		<release.note>Simple</release.note>
-		<start-class>com.interswitchug.phoenix.api.middleware.PhoenixSimulatorApplication</start-class>
+		<start-class>com.uganda.phoenix.api.middleware.PhoenixSimulatorApplication</start-class>
 	</properties>
 
 	<dependencies>
