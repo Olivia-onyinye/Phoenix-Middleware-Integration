@@ -1,8 +1,12 @@
 package com.uganda.phoenix.api.middleware.api.request;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.io.Serializable;
 
-
+@Getter
+@Setter
 public class CardData implements Serializable {
 
 	private static final long serialVersionUID = -9204211501143065811L;
