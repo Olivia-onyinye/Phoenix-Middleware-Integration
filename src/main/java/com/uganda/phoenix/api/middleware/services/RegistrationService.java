@@ -111,7 +111,7 @@ public class RegistrationService {
 				 .build();
 		  log.info("Request: {}",setup);
 
-		  Map<String,String> headers = AuthUtils.generateInterswitchAuth(Constants.POST_REQUEST, registrationEndpointUrl,"","","",privateKey);
+		  Map<String,String> headers = AuthUtils.generateInterswitchAuth(Constants.POST_REQUEST, registrationEndpointUrl,"","","");
 		  String json= JSONDataTransform.marshall(setup);
 		  log.info("Request json: {}",json);
 		 return HttpUtil.postHTTPRequest( registrationEndpointUrl, headers, json);
@@ -132,7 +132,7 @@ public class RegistrationService {
 				 .gprsCoordinate("").build();
 
 		  Map<String,String> headers = AuthUtils.generateInterswitchAuth(Constants.POST_REQUEST, registrationCompletionEndpointUrl,
-				  "",authToken,terminalKey,privateKey);
+				  "",authToken,terminalKey);
 		  String json= JSONDataTransform.marshall(completeReg);
 
 		  return HttpUtil.postHTTPRequest( registrationCompletionEndpointUrl, headers, json);
