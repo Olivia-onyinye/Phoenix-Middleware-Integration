@@ -1,12 +1,14 @@
 package com.uganda.phoenix.api.middleware.utils;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.net.URLEncoder;
 import java.util.*;
 
 @Component
+@Slf4j
 public class AuthUtils {
 
 	public static HashMap<String, String> generateInterswitchAuth(String httpMethod, String resourceUrl,
@@ -41,7 +43,7 @@ public class AuthUtils {
 		if (additionalParameters != null && !"".equals(additionalParameters))
 			signatureCipher = signatureCipher + "&" + additionalParameters;
 
-		System.out.println("signatureCipher "+ signatureCipher);
+		log.info("signatureCipher {}", signatureCipher);
 
 		interswitchAuth.put(Constants.AUTHORIZATION, authorization.trim());
 		interswitchAuth.put(Constants.TIMESTAMP, String.valueOf(timestamp));
@@ -50,7 +52,7 @@ public class AuthUtils {
 		if(privateKey.isEmpty())
 			interswitchAuth.put(Constants.SIGNATURE,CryptoUtils.signWithPrivateKey(signatureCipher));
 		else {
-			System.out.println("signed with private "+ privateKey);
+			log.info("signed with private {}", privateKey);
 			interswitchAuth.put(Constants.SIGNATURE,CryptoUtils.signWithPrivateKey(signatureCipher,privateKey));
 		}
 
@@ -61,8 +63,8 @@ public class AuthUtils {
 
 		interswitchAuth.put(Constants.AUTH_TOKEN,authToken);
 
-		System.out.println("terminal key "+terminalKey);
-		System.out.println("OutGoing Headers");
+		log.info("terminal key {}",terminalKey);
+		log.info("OutGoing Headers");
 
 		for (Map.Entry<String, String> entry : interswitchAuth.entrySet()) {
 			System.out.println(entry.getKey() + "-" + entry.getValue());
