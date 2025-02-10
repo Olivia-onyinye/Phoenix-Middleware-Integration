@@ -1,9 +1,13 @@
 package com.uganda.phoenix.api.middleware.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 
+@Getter
+@Setter
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class ClientRegistrationResponse implements Serializable{
 	
@@ -15,27 +19,4 @@ public class ClientRegistrationResponse implements Serializable{
 	private String authToken;
 
 	private String serverSessionPublicKey;
-
-
-
-	public String getServerSessionPublicKey() {
-		return serverSessionPublicKey;
-	}
-	public void setServerSessionPublicKey(String serverSessionPublicKey) {
-		this.serverSessionPublicKey = serverSessionPublicKey;
-	}
-	public String getTransactionReference() {
-		return transactionReference;
-	}
-	public void setTransactionReference(String transactionReference) {
-		this.transactionReference = transactionReference;
-	}
-	public String getAuthToken() {
-		return authToken;
-	}
-	public void setAuthToken(String authToken) {
-		this.authToken = authToken;
-	}
-
-
 }

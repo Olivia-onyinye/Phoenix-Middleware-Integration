@@ -3,6 +3,7 @@ package com.uganda.phoenix.api.middleware.services;
 import com.uganda.phoenix.api.middleware.api.request.LoginResponse;
 import com.uganda.phoenix.api.middleware.model.*;
 import com.uganda.phoenix.api.middleware.utils.*;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.stereotype.Service;
 
@@ -10,6 +11,7 @@ import java.security.KeyPair;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @Service
 public class RegistrationService extends  BaseService {
 
@@ -49,15 +51,11 @@ public class RegistrationService extends  BaseService {
 	     String privateKey = Constants.PRIKEY;
          String publicKey  = Constants.PUBKEY;
 
+		 log.info("privateKey IS: {}", privateKey);
+		 log.info("publicKey IS: {}" , publicKey);
+		 log.info("URL: {}", Constants.ROOT_LINK);
 
-		 System.out.println("privateKey IS: " + privateKey);
-		 System.out.println("publicKey IS: " + publicKey);
-		 System.out.println("URL"+ Constants.ROOT_LINK);
 
-		 System.out.println(" private key {} "+ privateKey);
-		 System.out.println(" public key  {} " + publicKey);
-		 System.out.println(" public key  {} " + registrationDetail);
-		
 		EllipticCurveUtils curveUtils = new EllipticCurveUtils("ECDH");
 		KeyPair keyPair = curveUtils.generateKeypair();
 		String curvePrivateKey = curveUtils.getPrivateKey(keyPair);
@@ -78,11 +76,10 @@ public class RegistrationService extends  BaseService {
 			 String decryptedSessionKey = CryptoUtils.decryptWithPrivate(registrationResponse.getResponse().getServerSessionPublicKey(),privateKey);
 			 String terminalKey = curveUtils.doECDH(curvePrivateKey,decryptedSessionKey);
 
-			 System.out.println("==============sessionKey/terminalKey==============");
-			 System.out.println("sessionKey: {} "+terminalKey);
+			 log.info("==============sessionKey/terminalKey==============");
+			 log.info("sessionKey: {} ",terminalKey);
 
 			   String authToken =  CryptoUtils.decryptWithPrivate(registrationResponse.getResponse().getAuthToken(),privateKey);
-			  // LOG.info(" authToken {} " , authToken);
 			   String transactionReference = registrationResponse.getResponse().getTransactionReference();
 			   String otp = "";
 
@@ -95,17 +92,13 @@ public class RegistrationService extends  BaseService {
 				   if(response.getResponse().getClientSecret() != null  && response.getResponse().getClientSecret().length() > 5) {
 
 					   String clientSecret = CryptoUtils.decryptWithPrivate(response.getResponse().getClientSecret() ,privateKey);
-					   System.out.println("New ClientSecret: " +clientSecret);
+					   log.info("New ClientSecret: {}" ,clientSecret);
 						//return the New secret
-					   return "Sucessful, New Client Secret: " + clientSecret;
+					   return "Successful, New Client Secret: " + clientSecret;
 				   }
-
-			   }else {
-				   //FAiled
-				   //LOG.info("finalResponse: {}", response.getResponseMessage());
+			   } else {
 				   return response.getResponseMessage();
 			   }
-
 			   return "Registration Failed";
 		 }
 
@@ -114,18 +107,18 @@ public class RegistrationService extends  BaseService {
 	 private String clientRegistrationRequest(String publicKey,String clientSessionPublicKey,String privateKey,ClientRegistrationDetail setup) throws Exception{
 
 		 String registrationEndpointUrl = Constants.ROOT_LINK + "client/clientRegistration";
-
-		 setup.setSerialId(Constants.MY_SERIAL_ID);
-		  setup.setTerminalId(Constants.TERMINAL_ID);
-		  setup.setPublicKey(publicKey);
-		  setup.setGprsCoordinate("");
-		  setup.setClientSessionPublicKey(clientSessionPublicKey);
-
-		 System.out.println("Request: "+setup);
+		 setup = ClientRegistrationDetail.builder()
+				 .serialId(Constants.MY_SERIAL_ID)
+				 .terminalId(Constants.TERMINAL_ID)
+				 .publicKey(publicKey)
+				 .gprsCoordinate("")
+				 .clientSessionPublicKey(clientSessionPublicKey)
+				 .build();
+		  log.info("Request: {}",setup);
 
 		  Map<String,String> headers = AuthUtils.generateInterswitchAuth(Constants.POST_REQUEST, registrationEndpointUrl,"","","",privateKey);
 		  String json= JSONDataTransform.marshall(setup);
-		 System.out.println("Request json: "+json);
+		  log.info("Request json: {}",json);
 		 return HttpUtil.postHTTPRequest( registrationEndpointUrl, headers, json);
 	  }
 	 
@@ -133,17 +126,16 @@ public class RegistrationService extends  BaseService {
 
 		 String registrationCompletionEndpointUrl = Constants.ROOT_LINK   + "client/completeClientRegistration";
 
-		 CompleteClientRegistration completeReg= new CompleteClientRegistration();
-
-		  String passwordHash = UtilMethods.hash512(Constants.ACCOUNT_PWD);
-		  completeReg.setTerminalId(Constants.TERMINAL_ID);
-		  completeReg.setSerialId(Constants.MY_SERIAL_ID);
-		  completeReg.setOtp(CryptoUtils.encrypt(otp,terminalKey));
-		  completeReg.setRequestReference(java.util.UUID.randomUUID().toString());
-		  completeReg.setPassword(CryptoUtils.encrypt(passwordHash,terminalKey));
-		  completeReg.setTransactionReference(transactionReference);
-		  completeReg.setAppVersion(Constants.APP_VERSION);
-		  completeReg.setGprsCoordinate("");
+		 String passwordHash = UtilMethods.hash512(Constants.ACCOUNT_PWD);
+		 CompleteClientRegistration completeReg= CompleteClientRegistration.builder()
+				 .terminalId(Constants.TERMINAL_ID)
+				 .serialId(Constants.MY_SERIAL_ID)
+				 .otp(CryptoUtils.encrypt(otp,terminalKey))
+				 .requestReference(java.util.UUID.randomUUID().toString())
+				 .password(CryptoUtils.encrypt(passwordHash,terminalKey))
+				 .transactionReference(transactionReference)
+				 .appVersion(Constants.APP_VERSION)
+				 .gprsCoordinate("").build();
 
 		  Map<String,String> headers = AuthUtils.generateInterswitchAuth(Constants.POST_REQUEST, registrationCompletionEndpointUrl,
 				  "",authToken,terminalKey,privateKey);

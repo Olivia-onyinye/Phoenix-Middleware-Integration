@@ -1,28 +1,19 @@
 package com.uganda.phoenix.api.middleware.model;
 
+import lombok.Builder;
+import lombok.Value;
+import lombok.extern.jackson.Jacksonized;
 
-public class CompleteClientRegistration extends ClientTerminalRequest {
-	private String otp;
-	private String password;
-	private String transactionReference;
-	public String getOtp() {
-		return otp;
-	}
-	public void setOtp(String otp) {
-		this.otp = otp;
-	}
-	public String getPassword() {
-		return password;
-	}
-	public void setPassword(String password) {
-		this.password = password;
-	}
-	public String getTransactionReference() {
-		return transactionReference;
-	}
-	public void setTransactionReference(String transactionReference) {
-		this.transactionReference = transactionReference;
-	}
-	
-	
+@Builder(toBuilder = true)
+@Value
+@Jacksonized
+public class CompleteClientRegistration {
+	String terminalId;
+	String appVersion;
+	String serialId;
+	String requestReference;
+	String gprsCoordinate;
+	String otp;
+	String password;
+	String transactionReference;
 }
