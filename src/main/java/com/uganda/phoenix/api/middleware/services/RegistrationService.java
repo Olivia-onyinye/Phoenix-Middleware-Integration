@@ -13,7 +13,7 @@ import java.util.Map;
 
 @Slf4j
 @Service
-public class RegistrationService extends  BaseService {
+public class RegistrationService {
 
 
 	/**
@@ -28,10 +28,9 @@ public class RegistrationService extends  BaseService {
 	 KeyPair pair = CryptoUtils.generateKeyPair();
      String privateKey = Base64.encodeBase64String(pair.getPrivate().getEncoded());
      String publicKey =  Base64.encodeBase64String(pair.getPublic().getEncoded());
-	 Map keyPair = new HashMap();
+	 Map<String, String> keyPair = new HashMap<>();
 	 keyPair.put("publicKey", publicKey);
 	 keyPair.put("privateKey", privateKey);
-
 	 return  keyPair;
 
 	}
@@ -55,57 +54,53 @@ public class RegistrationService extends  BaseService {
 		 log.info("publicKey IS: {}" , publicKey);
 		 log.info("URL: {}", Constants.ROOT_LINK);
 
-
 		EllipticCurveUtils curveUtils = new EllipticCurveUtils("ECDH");
 		KeyPair keyPair = curveUtils.generateKeypair();
 		String curvePrivateKey = curveUtils.getPrivateKey(keyPair);
 		String curvePublicKey  = curveUtils.getPublicKey(keyPair);
+
+		String resonse = clientRegistrationRequest(publicKey,curvePublicKey,privateKey,registrationDetail);
 		
-		 String resonse = clientRegistrationRequest(publicKey,curvePublicKey,privateKey,registrationDetail);
-		
-		 BaseResponse<ClientRegistrationResponse> registrationResponse = UtilMethods.unMarshallSystemResponseObject(resonse,  ClientRegistrationResponse.class);
+		BaseResponse<ClientRegistrationResponse> registrationResponse = UtilMethods.unMarshallSystemResponseObject(resonse,  ClientRegistrationResponse.class);
 
-		 if(!registrationResponse.getResponseCode().equals(PhoenixResponseCodes.APPROVED.CODE)) {
-			 //If it failed, show message
-			 return  registrationResponse.getResponseMessage();
-		 }
-		 else {
+		if(!registrationResponse.getResponseCode().equals(PhoenixResponseCodes.APPROVED.CODE)) {
+			//If it failed, show message
+			return registrationResponse.getResponseMessage();
+		} else {
+			//Registration was successful, extract needed values to continue to complete registration
 
-			 //Registration was successful, extract needed values to continue to complete registration
+			String decryptedSessionKey = CryptoUtils.decryptWithPrivate(registrationResponse.getResponse().getServerSessionPublicKey(),privateKey);
+			String terminalKey = curveUtils.doECDH(curvePrivateKey,decryptedSessionKey);
 
-			 String decryptedSessionKey = CryptoUtils.decryptWithPrivate(registrationResponse.getResponse().getServerSessionPublicKey(),privateKey);
-			 String terminalKey = curveUtils.doECDH(curvePrivateKey,decryptedSessionKey);
+			log.info("==============sessionKey/terminalKey==============");
+			log.info("sessionKey: {} ",terminalKey);
 
-			 log.info("==============sessionKey/terminalKey==============");
-			 log.info("sessionKey: {} ",terminalKey);
+			String authToken =  CryptoUtils.decryptWithPrivate(registrationResponse.getResponse().getAuthToken(),privateKey);
+			String transactionReference = registrationResponse.getResponse().getTransactionReference();
+			String otp = "";
 
-			   String authToken =  CryptoUtils.decryptWithPrivate(registrationResponse.getResponse().getAuthToken(),privateKey);
-			   String transactionReference = registrationResponse.getResponse().getTransactionReference();
-			   String otp = "";
+			String finalResponse =  completeRegistration(terminalKey,authToken,transactionReference, otp,privateKey);
+			BaseResponse<LoginResponse> response = UtilMethods.unMarshallSystemResponseObject(finalResponse,  LoginResponse.class);
 
-			   String finalResponse =  completeRegistration(terminalKey,authToken,transactionReference, otp,privateKey);
-			   BaseResponse<LoginResponse> response = UtilMethods.unMarshallSystemResponseObject(finalResponse,  LoginResponse.class);
+			if(response.getResponseCode().equals(PhoenixResponseCodes.APPROVED.CODE)) {
 
-			   if(response.getResponseCode().equals(PhoenixResponseCodes.APPROVED.CODE)) {
+				//Complete registration was successful, extract returned new Secret
+				if(response.getResponse().getClientSecret() != null  && response.getResponse().getClientSecret().length() > 5) {
 
-				   //Complete registration was successful, extract returned new Secret
-				   if(response.getResponse().getClientSecret() != null  && response.getResponse().getClientSecret().length() > 5) {
-
-					   String clientSecret = CryptoUtils.decryptWithPrivate(response.getResponse().getClientSecret() ,privateKey);
-					   log.info("New ClientSecret: {}" ,clientSecret);
-						//return the New secret
-					   return "Successful, New Client Secret: " + clientSecret;
-				   }
-			   } else {
-				   return response.getResponseMessage();
-			   }
-			   return "Registration Failed";
-		 }
+					String clientSecret = CryptoUtils.decryptWithPrivate(response.getResponse().getClientSecret() ,privateKey);
+					log.info("New ClientSecret: {}" ,clientSecret);
+					//return the New secret
+					return "Successful, New Client Secret: " + clientSecret;
+				}
+			} else {
+				return response.getResponseMessage();
+			}
+			return "Registration Failed";
+		}
 
 	 }
 	 
 	 private String clientRegistrationRequest(String publicKey,String clientSessionPublicKey,String privateKey,ClientRegistrationDetail setup) throws Exception{
-
 		 String registrationEndpointUrl = Constants.ROOT_LINK + "client/clientRegistration";
 		 setup = ClientRegistrationDetail.builder()
 				 .serialId(Constants.MY_SERIAL_ID)
@@ -123,7 +118,6 @@ public class RegistrationService extends  BaseService {
 	  }
 	 
 	 private String completeRegistration(String terminalKey,String authToken,String transactionReference,String otp,String privateKey) throws Exception{
-
 		 String registrationCompletionEndpointUrl = Constants.ROOT_LINK   + "client/completeClientRegistration";
 
 		 String passwordHash = UtilMethods.hash512(Constants.ACCOUNT_PWD);

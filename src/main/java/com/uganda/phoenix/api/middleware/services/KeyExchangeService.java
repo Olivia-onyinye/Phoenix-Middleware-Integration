@@ -20,15 +20,18 @@ public class KeyExchangeService {
 		String privateKey = curveUtils.getPrivateKey(pair);
 		String publicKey = curveUtils.getPublicKey(pair);
 
-		KeyExchangeRequest request = new KeyExchangeRequest();
-		request.setTerminalId(Constants.TERMINAL_ID);
-		request.setSerialId(Constants.MY_SERIAL_ID);
-		request.setRequestReference(java.util.UUID.randomUUID().toString());
-		request.setAppVersion(Constants.APP_VERSION);
+		KeyExchangeRequest request = KeyExchangeRequest.builder()
+				.terminalId(Constants.TERMINAL_ID)
+				.serialId(Constants.MY_SERIAL_ID)
+				.requestReference(java.util.UUID.randomUUID().toString())
+				.appVersion(Constants.APP_VERSION)
+				.clientSessionPublicKey(publicKey)
+				.build();
 		String passwordHash = UtilMethods.hash512(Constants.ACCOUNT_PWD) + request.getRequestReference()
 				+ Constants.MY_SERIAL_ID;
-		request.setPassword(CryptoUtils.signWithPrivateKey(passwordHash));
-		request.setClientSessionPublicKey(publicKey);
+		request = KeyExchangeRequest.builder()
+				.password(CryptoUtils.signWithPrivateKey(passwordHash))
+				.build();
 
 		Map<String, String> headers = AuthUtils.generateInterswitchAuth(Constants.POST_REQUEST, endpointUrl, "", "",
 				"");
